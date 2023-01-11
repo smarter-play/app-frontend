@@ -38,10 +38,10 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
 
   @override
   Widget build(BuildContext context) {
-    Session session = ref.watch(sessionProvider.notifier);
-    if (!session.isLoggedIn) {
+    String? session = ref.watch(sessionProvider);
+    if (session == null) {
       getSession().then((value) {
-        if (value != null) session.logIn(value);
+        if (value != null) ref.read(sessionProvider.notifier).logIn(value);
       });
       return LoginPage();
     }

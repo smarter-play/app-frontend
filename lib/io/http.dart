@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import '../models.dart';
 
 final _client = Dio(BaseOptions(
-  baseUrl: 'http://10.0.2.2:8080',
+  baseUrl: 'http://localhost:8080',
 ));
 
 void setAuthHeader(String token) {
@@ -30,6 +30,22 @@ class Backend {
       final response = await _dio.post('/auth/login', data: {
         'email': email,
         'password': password,
+      });
+      return response.data;
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future<String?> signUp(User user, String password) async {
+    try {
+      final response = await _dio.post('/auth/login', data: {
+        'email': user.email,
+        'password': password,
+        "name": user.name,
+        "surname": user.surname,
+        "date_of_birth": user.dateOfBirth
       });
       return response.data;
     } catch (e) {

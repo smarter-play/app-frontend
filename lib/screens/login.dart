@@ -89,12 +89,23 @@ class LoginPage extends ConsumerWidget {
   }
 }
 
-class SignupPage extends StatelessWidget {
+class SignupPage extends StatefulWidget {
   SignupPage({super.key});
+
+  @override
+  State<SignupPage> createState() => _SignupPageState();
+}
+
+class _SignupPageState extends State<SignupPage> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _surnameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+
   final TextEditingController _passwordController = TextEditingController();
+
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  DateTime? pickedDate;
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +118,7 @@ class SignupPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
-                "Enter your login credentials",
+                "Enter your account data",
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
@@ -116,6 +127,52 @@ class SignupPage extends StatelessWidget {
               child: SizedBox(
                 height: 50.0,
                 child: TextField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Name",
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: SizedBox(
+                height: 50.0,
+                child: TextField(
+                  controller: _surnameController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Surname",
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Container(
+                height: 50.0,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.white38),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: GestureDetector(
+                  child: const Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text(
+                      "Date of Birth",
+                      style: TextStyle(color: Colors.white54),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: SizedBox(
+                height: 50.0,
+                child: TextField(
+                  controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
@@ -129,6 +186,7 @@ class SignupPage extends StatelessWidget {
               child: SizedBox(
                 height: 50.0,
                 child: TextField(
+                  controller: _passwordController,
                   obscureText: true,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
@@ -137,16 +195,12 @@ class SignupPage extends StatelessWidget {
                 ),
               ),
             ),
-            InputDatePickerFormField(
-              fieldLabelText: "Date of Birth",
-              firstDate: DateTime(1900),
-              lastDate: DateTime.now(),
-            ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: SizedBox(
                 height: 50.0,
                 child: TextField(
+                  controller: _confirmPasswordController,
                   obscureText: true,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
@@ -156,6 +210,7 @@ class SignupPage extends StatelessWidget {
               ),
             ),
             MaterialButton(
+              color: Theme.of(context).primaryColor,
               onPressed: () {},
               child: const Text("Sign Up"),
             ),

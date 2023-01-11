@@ -21,7 +21,7 @@ class LeaderboardPage extends StatelessWidget {
                 User user = users[index];
                 return ListTile(
                   title: Text(user.name),
-                  subtitle: Text("0"),
+                  subtitle: const Text("0"),
                 );
               },
             );
