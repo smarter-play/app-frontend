@@ -4,16 +4,11 @@ import 'package:riverpod/riverpod.dart';
 
 import 'models.dart';
 
-class LoginResult {
-  const LoginResult(this.token);
-  final String token;
-}
-
-class Session extends StateNotifier<LoginResult?> {
+class Session extends StateNotifier<String?> {
   Session() : super(null);
 
-  void logIn(LoginResult r) {
-    setAuthHeader(r.token);
+  void logIn(String r) {
+    setAuthHeader(r);
     state = r;
   }
 
@@ -21,7 +16,9 @@ class Session extends StateNotifier<LoginResult?> {
     resetAuthHeaders();
     state = null;
   }
+
+  bool get isLoggedIn => state != null;
 }
 
 final sessionProvider =
-    StateNotifierProvider<Session, LoginResult?>((ref) => Session());
+    StateNotifierProvider<Session, String?>((ref) => Session());

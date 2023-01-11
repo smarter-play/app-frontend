@@ -1,4 +1,5 @@
 import 'package:app_frontend/io/http.dart';
+import 'package:app_frontend/io/storage.dart';
 import 'package:app_frontend/screens/leaderboard.dart';
 import 'package:app_frontend/screens/login.dart';
 import 'package:app_frontend/screens/map.dart';
@@ -37,8 +38,11 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
 
   @override
   Widget build(BuildContext context) {
-    LoginResult? session = ref.watch(sessionProvider);
-    if (session == null) {
+    Session session = ref.watch(sessionProvider.notifier);
+    if (!session.isLoggedIn) {
+      getSession().then((value) {
+        if (value != null) session.logIn(value);
+      });
       return LoginPage();
     }
     return Scaffold(

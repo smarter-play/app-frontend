@@ -11,7 +11,7 @@ class LoginPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Login")),
+      appBar: AppBar(title: const Text("Log In")),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -21,7 +21,7 @@ class LoginPage extends ConsumerWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const SignupPage(),
+                      builder: (context) => SignupPage(),
                     ),
                   );
                 },
@@ -54,7 +54,6 @@ class LoginPage extends ConsumerWidget {
                 height: 50.0,
                 child: TextField(
                   controller: _passwordController,
-                  keyboardType: TextInputType.emailAddress,
                   obscureText: true,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
@@ -69,7 +68,7 @@ class LoginPage extends ConsumerWidget {
                     _emailController.text, _passwordController.text);
 
                 if (result != null) {
-                  ref.read(sessionProvider.notifier).logIn(LoginResult(result));
+                  ref.read(sessionProvider.notifier).logIn(result);
                 } else {
                   showDialog(
                       context: context,
@@ -91,10 +90,78 @@ class LoginPage extends ConsumerWidget {
 }
 
 class SignupPage extends StatelessWidget {
-  const SignupPage({super.key});
+  SignupPage({super.key});
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(title: const Text("Sign Up")),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Text(
+                "Enter your login credentials",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: SizedBox(
+                height: 50.0,
+                child: TextField(
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Email",
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: SizedBox(
+                height: 50.0,
+                child: TextField(
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Password",
+                  ),
+                ),
+              ),
+            ),
+            InputDatePickerFormField(
+              fieldLabelText: "Date of Birth",
+              firstDate: DateTime(1900),
+              lastDate: DateTime.now(),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: SizedBox(
+                height: 50.0,
+                child: TextField(
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Confirm Password",
+                  ),
+                ),
+              ),
+            ),
+            MaterialButton(
+              onPressed: () {},
+              child: const Text("Sign Up"),
+            ),
+          ]),
+        ),
+      ),
+    );
   }
 }
