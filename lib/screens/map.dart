@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 
 class MapWidget extends StatefulWidget {
   final List<Marker> markers;
@@ -11,22 +12,14 @@ class MapWidget extends StatefulWidget {
 }
 
 class _MapWidgetState extends State<MapWidget> {
-  GoogleMapController? mapController;
+  MapController mapController = MapController();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300,
-      width: double.infinity,
-      child: GoogleMap(
-        initialCameraPosition: const CameraPosition(
-          target: LatLng(0, 0),
-          zoom: 10,
-        ),
-        markers: Set.from(widget.markers),
-        onMapCreated: (GoogleMapController controller) {
-          mapController = controller;
-        },
+      child: FlutterMap(
+        mapController: mapController,
+        options: MapOptions(),
       ),
     );
   }

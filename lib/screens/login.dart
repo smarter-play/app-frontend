@@ -1,6 +1,8 @@
 import 'package:app_frontend/io/http.dart';
 import 'package:app_frontend/models.dart';
 import 'package:app_frontend/state.dart';
+import 'package:app_frontend/widgets/buttons.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -19,17 +21,22 @@ class LoginPage extends ConsumerWidget {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(children: [
-            MaterialButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SignupPage(),
-                    ),
-                  );
-                },
-                child: const Text("Sign Up")),
-            const Text("or"),
+            CustomButton(
+              colored: false,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SignupPage(),
+                  ),
+                );
+              },
+              text: "Sign Up",
+            ),
+            const Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: Text("or"),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
@@ -65,25 +72,29 @@ class LoginPage extends ConsumerWidget {
                 ),
               ),
             ),
-            MaterialButton(
-              onPressed: () async {
-                String? result = await backend.logIn(
-                    _emailController.text, _passwordController.text);
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: CustomButton(
+                onPressed: () async {
+                  String? result = await backend.logIn(
+                      _emailController.text, _passwordController.text);
 
-                if (result != null) {
-                  ref.read(sessionProvider.notifier).logIn(result);
-                } else {
-                  showDialog(
-                      context: context,
-                      builder: (_) => const AlertDialog(
-                            title: Text("Wrong credentials"),
-                            content: Text(
-                              "The credentials you entered are wrong. Please try again.",
-                            ),
-                          ));
-                }
-              },
-              child: const Text("Login"),
+                  if (result != null) {
+                    ref.read(sessionProvider.notifier).logIn(result);
+                  } else {
+                    if (!context.mounted) return;
+                    showDialog(
+                        context: context,
+                        builder: (_) => const AlertDialog(
+                              title: Text("Wrong credentials"),
+                              content: Text(
+                                "The credentials you entered are wrong. Please try again.",
+                              ),
+                            ));
+                  }
+                },
+                text: "Login",
+              ),
             ),
           ]),
         ),
