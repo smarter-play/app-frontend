@@ -31,7 +31,7 @@ class Session extends StateNotifier<UserSession?> {
 
   bool get isLoggedIn => state != null;
 
-  void updateProfile() async {
+  Future<void> updateProfile() async {
     state = state!.copyWith(user: await backend.getCurrentUser());
   }
 }

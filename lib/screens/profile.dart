@@ -69,7 +69,7 @@ class ProfilePage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Text(
-                    "10",
+                    "0",
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                 ),
@@ -102,9 +102,12 @@ class _EditProfileState extends ConsumerState<EditProfile> {
           DateFormat.yMd(Localizations.localeOf(context).scriptCode ?? "it_IT")
               .format(_dob));
 
+  late final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(title: const Text("Edit profile")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -195,10 +198,24 @@ class _EditProfileState extends ConsumerState<EditProfile> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: const Icon(Icons.save),
-      ),
+      floatingActionButton: Builder(builder: (context) {
+        return FloatingActionButton(
+          onPressed: () async {
+            await backend.editUser(
+              _nameController.text,
+              _surnameController.text,
+              _emailController.text,
+              _dob,
+            );
+            await notifier.updateProfile();
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Profile updated"),
+            ));
+          },
+          child: const Icon(Icons.save),
+        );
+      }),
     );
   }
 }
