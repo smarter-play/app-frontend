@@ -8,95 +8,120 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
-class LoginPage extends ConsumerWidget {
+class LoginPage extends ConsumerStatefulWidget {
   LoginPage({super.key});
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends ConsumerState<LoginPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool showPassword = false;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Log In")),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(children: [
-            CustomButton(
-              colored: false,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SignupPage(),
-                  ),
-                );
-              },
-              text: "Sign Up",
-            ),
-            const Padding(
-              padding: EdgeInsets.only(top: 8.0),
-              child: Text("or"),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                "Enter your login credentials",
-                style: Theme.of(context).textTheme.titleLarge,
+          child: LayoutBuilder(builder: (context, size) {
+            return Column(children: [
+              if (size.maxHeight > 600)
+                Image.asset(
+                  "assets/logo.jpg",
+                  height: 250.0,
+                ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: CustomButton(
+                  colored: false,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SignupPage(),
+                      ),
+                    );
+                  },
+                  text: "Sign Up",
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: SizedBox(
-                height: 50.0,
-                child: TextField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Email",
+              const Padding(
+                padding: EdgeInsets.only(top: 8.0),
+                child: Text("or"),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  "Enter your login credentials",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: SizedBox(
+                  height: 50.0,
+                  child: TextField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Email",
+                    ),
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: SizedBox(
-                height: 50.0,
-                child: TextField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: "Password",
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: SizedBox(
+                  height: 50.0,
+                  child: TextField(
+                    controller: _passwordController,
+                    obscureText: !showPassword,
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: "Password",
+                      suffixIcon: IconButton(
+                        onPressed: () => setState(() {
+                          showPassword = !showPassword;
+                        }),
+                        icon: showPassword
+                            ? const Icon(Icons.visibility_off_outlined)
+                            : const Icon(Icons.visibility_outlined),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: CustomButton(
-                onPressed: () async {
-                  String? result = await backend.logIn(
-                      _emailController.text, _passwordController.text);
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: CustomButton(
+                  onPressed: () async {
+                    String? result = await backend.logIn(
+                        _emailController.text, _passwordController.text);
 
-                  if (result != null) {
-                    ref.read(sessionProvider.notifier).logIn(result);
-                  } else {
-                    if (!context.mounted) return;
-                    showDialog(
-                        context: context,
-                        builder: (_) => const AlertDialog(
-                              title: Text("Wrong credentials"),
-                              content: Text(
-                                "The credentials you entered are wrong. Please try again.",
-                              ),
-                            ));
-                  }
-                },
-                text: "Login",
+                    if (result != null) {
+                      ref.read(sessionProvider.notifier).logIn(result);
+                    } else {
+                      if (!context.mounted) return;
+                      showDialog(
+                          context: context,
+                          builder: (_) => const AlertDialog(
+                                title: Text("Wrong credentials"),
+                                content: Text(
+                                  "The credentials you entered are wrong. Please try again.",
+                                ),
+                              ));
+                    }
+                  },
+                  text: "Login",
+                ),
               ),
-            ),
-          ]),
+            ]);
+          }),
         ),
       ),
     );
@@ -122,6 +147,7 @@ class _SignupPageState extends State<SignupPage> {
 
   final TextEditingController _dobController = TextEditingController();
   DateTime? pickedDate;
+  bool showPassword = false, showConfirmPassword = false;
 
   Future<void> signUp() async {
     if (_passwordController.text != _confirmPasswordController.text) {
@@ -167,13 +193,14 @@ class _SignupPageState extends State<SignupPage> {
       return;
     }
     showDialog(
-        context: context,
-        builder: (_) => const AlertDialog(
-              title: Text("Signup successful"),
-              content: Text(
-                "You have successfully signed up to Smarter Play!",
-              ),
-            ));
+      context: context,
+      builder: (_) => const AlertDialog(
+        title: Text("Signup successful"),
+        content: Text(
+          "You have successfully signed up to Smarter Play!",
+        ),
+      ),
+    );
   }
 
   @override
@@ -280,10 +307,18 @@ class _SignupPageState extends State<SignupPage> {
                   height: 50.0,
                   child: TextField(
                     controller: _passwordController,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
+                    obscureText: !showPassword,
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
                       labelText: "Password",
+                      suffixIcon: IconButton(
+                        onPressed: () => setState(() {
+                          showPassword = !showPassword;
+                        }),
+                        icon: showPassword
+                            ? const Icon(Icons.visibility_off_outlined)
+                            : const Icon(Icons.visibility_outlined),
+                      ),
                     ),
                   ),
                 ),
@@ -294,10 +329,18 @@ class _SignupPageState extends State<SignupPage> {
                   height: 50.0,
                   child: TextField(
                     controller: _confirmPasswordController,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
+                    obscureText: !showConfirmPassword,
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
                       labelText: "Confirm Password",
+                      suffixIcon: IconButton(
+                        onPressed: () => setState(() {
+                          showConfirmPassword = !showConfirmPassword;
+                        }),
+                        icon: showConfirmPassword
+                            ? const Icon(Icons.visibility_off_outlined)
+                            : const Icon(Icons.visibility_outlined),
+                      ),
                     ),
                   ),
                 ),

@@ -4,9 +4,11 @@ import 'package:app_frontend/screens/leaderboard.dart';
 import 'package:app_frontend/screens/login.dart';
 import 'package:app_frontend/screens/map.dart';
 import 'package:app_frontend/screens/profile.dart';
+import 'package:app_frontend/screens/scanner.dart';
 import 'package:app_frontend/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -19,7 +21,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Smarter Play',
-      theme: ThemeData.dark(useMaterial3: true),
+      theme: ThemeData(
+          useMaterial3: true,
+          brightness: Brightness.dark,
+          primarySwatch: Colors.green),
       home: const MyHomePage(),
     );
   }
@@ -38,7 +43,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
 
   @override
   Widget build(BuildContext context) {
-    String? session = ref.watch(sessionProvider);
+    initializeDateFormatting();
+    UserSession? session = ref.watch(sessionProvider);
     if (session == null) {
       getSession().then((value) {
         if (value != null) ref.read(sessionProvider.notifier).logIn(value);
@@ -51,11 +57,9 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
         Expanded(
             child: TabBarView(controller: _controller, children: [
           const MapWidget(markers: []),
-          Container(
-            color: Colors.green,
-          ),
+          const QRCodeScanner(),
           LeaderboardPage(users: backend.getUsers()),
-          const ProfilePage(),
+          ProfilePage(ref.watch(sessionProvider)!.user, true),
         ])),
         TabBar(controller: _controller, tabs: const [
           Tab(
