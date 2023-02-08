@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import '../models.dart';
 
 final _client = Dio(BaseOptions(
-  baseUrl: 'http://localhost:8080',
+  baseUrl: 'http://192.168.1.4:8080',
 ));
 
 void setAuthHeader(String token) {

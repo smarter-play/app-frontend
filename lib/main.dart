@@ -4,6 +4,7 @@ import 'package:app_frontend/screens/leaderboard.dart';
 import 'package:app_frontend/screens/login.dart';
 import 'package:app_frontend/screens/map.dart';
 import 'package:app_frontend/screens/profile.dart';
+import 'package:app_frontend/screens/qr_scanner.dart';
 import 'package:app_frontend/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -51,9 +52,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
         Expanded(
             child: TabBarView(controller: _controller, children: [
           const MapWidget(markers: []),
-          Container(
-            color: Colors.green,
-          ),
+          const ScannerScreen(),
           LeaderboardPage(users: backend.getUsers()),
           const ProfilePage(),
         ])),
