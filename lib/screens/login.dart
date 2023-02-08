@@ -174,10 +174,12 @@ class _SignupPageState extends State<SignupPage> {
     try {
       await backend.signUp(
         User(
+          id: 0, // don't need to set a score, the backend will set it
           name: _nameController.text,
           surname: _surnameController.text,
           email: _emailController.text,
           dateOfBirth: pickedDate!,
+          score: 0, // don't need to set this either, it will start at 0 anyway
         ),
         _passwordController.text,
       );

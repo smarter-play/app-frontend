@@ -65,4 +65,14 @@ class Backend {
       "date_of_birth": date.toIso8601String()
     });
   }
+
+  Future<List<Court>> getCourtsInRange(
+      double lat, double lon, double range) async {
+    final response = await _dio.get('/courts', queryParameters: {
+      'lat': lat,
+      'lon': lon,
+      'range': range,
+    });
+    return (response.data as List).map((e) => Court.fromJson(e)).toList();
+  }
 }
