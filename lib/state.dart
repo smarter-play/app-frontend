@@ -4,12 +4,24 @@ import 'package:riverpod/riverpod.dart';
 
 import 'models.dart';
 
-class Session extends StateNotifier<String?> {
+class UserSession {
+  UserSession(this.user, this.token);
+
+  final User user;
+  final String token;
+
+  UserSession copyWith({User? user}) {
+    return UserSession(user ?? this.user, token);
+  }
+}
+
+class Session extends StateNotifier<UserSession?> {
   Session() : super(null);
 
-  void logIn(String r) {
+  Future<void> logIn(String r) async {
     setAuthHeader(r);
-    state = r;
+    final session = UserSession(await backend.getCurrentUser(), r);
+    state = session;
   }
 
   void logOut() {
@@ -18,7 +30,11 @@ class Session extends StateNotifier<String?> {
   }
 
   bool get isLoggedIn => state != null;
+
+  Future<void> updateProfile() async {
+    state = state!.copyWith(user: await backend.getCurrentUser());
+  }
 }
 
 final sessionProvider =
-    StateNotifierProvider<Session, String?>((ref) => Session());
+    StateNotifierProvider<Session, UserSession?>((ref) => Session());
