@@ -69,7 +69,7 @@ class ProfilePage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Text(
-                    "0",
+                    "${user.score}",
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                 ),

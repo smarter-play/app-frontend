@@ -30,9 +30,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           child: LayoutBuilder(builder: (context, size) {
             return Column(children: [
               if (size.maxHeight > 600)
-                Image.asset(
-                  "assets/logo.jpg",
-                  height: 250.0,
+                const CircleAvatar(
+                  backgroundImage: AssetImage(
+                    "assets/logo.jpg",
+                  ),
+                  radius: 125.0,
                 ),
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
@@ -194,6 +196,8 @@ class _SignupPageState extends State<SignupPage> {
               ));
       return;
     }
+    if (!mounted) return;
+
     showDialog(
       context: context,
       builder: (_) => const AlertDialog(
@@ -202,7 +206,7 @@ class _SignupPageState extends State<SignupPage> {
           "You have successfully signed up to Smarter Play!",
         ),
       ),
-    );
+    ).then((value) => Navigator.pop(context));
   }
 
   @override

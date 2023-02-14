@@ -57,7 +57,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage>
       children: [
         Expanded(
             child: TabBarView(controller: _controller, children: [
-          const MapWidget(markers: []),
+          const MapWidget(),
           const QRCodeScanner(),
           LeaderboardPage(users: backend.getUsers()),
           ProfilePage(ref.watch(sessionProvider)!.user, true),

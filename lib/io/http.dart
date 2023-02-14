@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import '../models.dart';
 
-bool emulator = false;
+bool emulator = true;
 
 final _client = Dio(BaseOptions(
-  baseUrl: emulator ? 'http://10.0.2.2:8080' : 'http://192.168.1.9:8080',
+  baseUrl: emulator ? 'http://10.0.2.2:8080' : 'http://localhost:8080',
 ));
 
 void setAuthHeader(String token) {
@@ -66,13 +66,42 @@ class Backend {
     });
   }
 
-  Future<List<Court>> getCourtsInRange(
+  Future<List<Basket>> getBasketsInRange(
       double lat, double lon, double range) async {
-    final response = await _dio.get('/courts', queryParameters: {
+    final response = await _dio.get('/baskets', queryParameters: {
       'lat': lat,
       'lon': lon,
       'range': range,
     });
-    return (response.data as List).map((e) => Court.fromJson(e)).toList();
+    return (response.data as List).map((e) => Basket.fromJson(e)).toList();
+  }
+
+  Future<void> addToTeam(int basketId, int teamId) {
+    return _dio.post('/baskets/$basketId/players', data: {
+      "team": "$teamId",
+    });
+  }
+
+  Future<void> setReadyStatus(int basketId, int teamId, bool ready) {
+    return _dio.put('/baskets/$basketId/$teamId/ready', data: {
+      "ready": ready ? "1" : "0",
+    });
+  }
+
+  Future<List<Game>> getRunningGames(int userId) async {
+    final response = await _dio.get('/games', queryParameters: {
+      "user_id": userId,
+      "running": 1,
+    });
+
+    return (response.data as List).map((e) => Game.fromJson(e)).toList();
+  }
+
+  Future<double> forecastOccupation(int basketId, DateTime date) async {
+    final response =
+        await _dio.get('/baskets/$basketId/forecast', queryParameters: {
+      "time": date.toIso8601String(),
+    });
+    return response.data;
   }
 }
