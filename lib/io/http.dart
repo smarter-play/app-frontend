@@ -97,11 +97,11 @@ class Backend {
     return (response.data as List).map((e) => Game.fromJson(e)).toList();
   }
 
-  Future<double> forecastOccupation(int basketId, DateTime date) async {
+  Future<num> forecastOccupation(int basketId, DateTime date) async {
     final response =
         await _dio.get('/baskets/$basketId/forecast', queryParameters: {
       "time": date.toIso8601String(),
     });
-    return response.data;
+    return response.data["occupation"];
   }
 }

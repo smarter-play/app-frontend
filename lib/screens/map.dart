@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_frontend/io/http.dart';
 import 'package:app_frontend/screens/basket.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +17,7 @@ class MapWidget extends StatefulWidget {
 class _MapWidgetState extends State<MapWidget> {
   List<Marker> markers = [];
   MapController mapController = MapController();
+  Timer? updateTimer;
 
   Future<void> initMarkers() async {
     await updateMapCenter();
@@ -24,41 +27,47 @@ class _MapWidgetState extends State<MapWidget> {
   Future<void> updateMarkers() async {
     var location = mapController.center;
     var bounds = mapController.bounds!;
-    var radius = 110.574 * (bounds.north - bounds.south);
-    var baskets = await backend.getBasketsInRange(
-        location.latitude, location.longitude, radius);
-    if (!mounted) return;
-    setState(() {
-      mapController.move(LatLng(location.latitude, location.longitude), 14);
-      markers = baskets
-          .map((e) => Marker(
-              point: LatLng(e.lat, e.lon),
-              builder: (_) {
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BasketScreen(basket: e),
+    var radius = 110.574 * (bounds.north - bounds.south) * 1000;
+    if (updateTimer != null && updateTimer!.isActive) {
+      updateTimer!.cancel();
+    }
+    updateTimer = Timer(const Duration(milliseconds: 1000), () async {
+      var baskets = await backend.getBasketsInRange(
+          location.latitude, location.longitude, radius);
+      if (!mounted) return;
+      setState(() {
+        markers = baskets
+            .map((e) => Marker(
+                point: LatLng(e.lat, e.lon),
+                builder: (_) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BasketScreen(basket: e),
+                        ),
+                      );
+                    },
+                    child: const CircleAvatar(
+                      backgroundImage: AssetImage(
+                        "assets/logo.jpg",
                       ),
-                    );
-                  },
-                  child: const CircleAvatar(
-                    backgroundImage: AssetImage(
-                      "assets/logo.jpg",
+                      radius: 20.0,
                     ),
-                    radius: 20.0,
-                  ),
-                );
-              }))
-          .toList();
+                  );
+                }))
+            .toList();
+      });
     });
   }
 
+  StreamSubscription? sub;
   @override
   void initState() {
     super.initState();
     initMarkers();
+    sub = mapController.mapEventStream.listen((_) => updateMarkers());
   }
 
   Future<void> updateMapCenter() async {
@@ -81,7 +90,16 @@ class _MapWidgetState extends State<MapWidget> {
               ));
     }
     var location = await Geolocator.getCurrentPosition();
-    mapController.move(LatLng(location.latitude, location.longitude), 13);
+    if (mounted) {
+      mapController.move(LatLng(location.latitude, location.longitude), 13);
+    }
+  }
+
+  @override
+  void dispose() {
+    sub?.cancel();
+    mapController.dispose();
+    super.dispose();
   }
 
   @override
@@ -103,6 +121,9 @@ class _MapWidgetState extends State<MapWidget> {
             tileProvider: NetworkTileProvider(),
             userAgentPackageName: 'com.smarterplay.smarterplay',
           ),
+          MarkerLayer(
+            markers: markers,
+          )
         ],
       ),
     );

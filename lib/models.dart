@@ -37,7 +37,7 @@ class Basket {
   factory Basket.fromJson(Map<String, dynamic> data) => Basket(
         id: data['id'] as int,
         address: data['address'] as String?,
-        occupation: data['occupation'] as double,
+        occupation: data['occupation'] as num,
         lat: data['lat'] as double,
         lon: data['lon'] as double,
       );
@@ -45,7 +45,7 @@ class Basket {
   final int id;
   final String? address;
   final double lat;
-  final double occupation;
+  final num occupation;
   final double lon;
 }
 
