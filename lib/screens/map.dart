@@ -31,9 +31,12 @@ class _MapWidgetState extends State<MapWidget> {
     if (updateTimer != null && updateTimer!.isActive) {
       updateTimer!.cancel();
     }
+    print("update markers, set timer");
     updateTimer = Timer(const Duration(milliseconds: 1000), () async {
+      print("inside timer");
       var baskets = await backend.getBasketsInRange(
           location.latitude, location.longitude, radius);
+      print(baskets);
       if (!mounted) return;
       setState(() {
         markers = baskets
@@ -105,8 +108,6 @@ class _MapWidgetState extends State<MapWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 300,
-      height: 300,
       color: Colors.green,
       child: FlutterMap(
         mapController: mapController,

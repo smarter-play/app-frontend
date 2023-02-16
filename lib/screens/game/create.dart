@@ -44,14 +44,14 @@ class _CreateGameState extends State<CreateGame> with TickerProviderStateMixin {
   void initState() {
     super.initState();
 
-    Timer.periodic(const Duration(seconds: 1), (timer) async {
+    /*Timer.periodic(const Duration(seconds: 1), (timer) async {
       var status = await backend.getReadyStatus(widget.basketId);
       if (status == null) return;
       setState(() {
         _team = status.team;
         _ready = status.ready;
       });
-    });
+    });*/
   }
 
   @override
