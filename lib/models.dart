@@ -51,6 +51,7 @@ class Basket {
 
 class Game {
   Game({
+    required this.id,
     required this.basket,
     required this.team1,
     required this.team2,
@@ -60,6 +61,7 @@ class Game {
   });
 
   factory Game.fromJson(Map<String, dynamic> data) => Game(
+        id: data['id'] as int,
         basket: data['basket'] as int,
         team1: (data['team1'] as List)
             .map((e) => User.fromJson(e as Map<String, dynamic>))
@@ -71,7 +73,7 @@ class Game {
         score2: data['score2'] as int,
         createdAt: DateTime.parse(data['created_at'] as String),
       );
-
+  final int id;
   final int basket;
   final List<User> team1;
   final List<User> team2;

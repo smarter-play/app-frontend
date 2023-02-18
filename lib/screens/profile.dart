@@ -1,12 +1,13 @@
 import 'package:app_frontend/io/http.dart';
 import 'package:app_frontend/models.dart';
+import 'package:app_frontend/screens/game/detail.dart';
 import 'package:app_frontend/state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends ConsumerWidget {
   // ignore: use_key_in_widget_constructors
   const ProfilePage(this.user, [this.editable = false]);
 
@@ -14,22 +15,29 @@ class ProfilePage extends StatelessWidget {
   final bool editable;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Profile"),
         actions: editable
             ? [
                 IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const EditProfile(),
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.edit))
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const EditProfile(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.edit),
+                ),
+                IconButton(
+                  onPressed: () {
+                    ref.read(sessionProvider.notifier).logOut();
+                  },
+                  icon: const Icon(Icons.logout),
+                )
               ]
             : null,
       ),
@@ -56,7 +64,6 @@ class ProfilePage extends StatelessWidget {
                 ],
               ),
             ),
-            Expanded(flex: 1, child: Container()),
             Column(
               children: [
                 Padding(
@@ -75,7 +82,35 @@ class ProfilePage extends StatelessWidget {
                 ),
               ],
             ),
-            Expanded(flex: 3, child: Container()),
+            Expanded(
+              child: FutureBuilder(
+                future: backend.getGamesByUser(user.id),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final games = snapshot.data as List<Game>;
+                    return ListView.builder(
+                      itemCount: games.length,
+                      itemBuilder: (context, index) {
+                        final game = games[index];
+                        return ListTile(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => GamePage(game),
+                            ),
+                          ),
+                          title: Text("${game.id}"),
+                        );
+                      },
+                    );
+                  } else {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                },
+              ),
+            ),
           ],
         ),
       ),

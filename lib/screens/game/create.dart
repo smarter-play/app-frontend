@@ -56,7 +56,10 @@ class _CreateGameState extends State<CreateGame> with TickerProviderStateMixin {
           context,
           MaterialPageRoute(
             builder: (context) {
-              return GamePage(games.first);
+              return GamePage(
+                games.first,
+                running: true,
+              );
             },
           ),
         );

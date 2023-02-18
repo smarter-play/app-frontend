@@ -1,4 +1,5 @@
 import 'package:app_frontend/io/http.dart';
+import 'package:app_frontend/io/storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -21,10 +22,12 @@ class Session extends StateNotifier<UserSession?> {
   Future<void> logIn(String r) async {
     setAuthHeader(r);
     final session = UserSession(await backend.getCurrentUser(), r);
+    saveSession(r);
     state = session;
   }
 
-  void logOut() {
+  void logOut() async {
+    await deleteSession();
     resetAuthHeaders();
     state = null;
   }

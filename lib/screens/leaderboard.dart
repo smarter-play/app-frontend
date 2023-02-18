@@ -1,3 +1,4 @@
+import 'package:app_frontend/screens/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:app_frontend/models.dart';
 
@@ -20,8 +21,14 @@ class LeaderboardPage extends StatelessWidget {
               itemBuilder: (context, index) {
                 User user = users[index];
                 return ListTile(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProfilePage(user)));
+                  },
                   title: Text(user.name),
-                  subtitle: const Text("0"),
+                  subtitle: Text("${user.score}"),
                 );
               },
             );

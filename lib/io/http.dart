@@ -115,4 +115,19 @@ class Backend {
     });
     return response.data["occupation"];
   }
+
+  Future<Game> getGame(int gameId) async {
+    final response = await _dio.get('/games/$gameId');
+    return Game.fromJson(response.data);
+  }
+
+  Future<List<Game>> getGamesByUser(int userId) async {
+    final response = await _dio.get('/games', queryParameters: {
+      "user_id": userId,
+    });
+
+    return (response.data["games"] as List)
+        .map((e) => Game.fromJson(e))
+        .toList();
+  }
 }

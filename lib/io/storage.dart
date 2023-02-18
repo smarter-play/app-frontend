@@ -9,3 +9,7 @@ Future<void> saveSession(String token) async {
 Future<String?> getSession() async {
   return await storage.read(key: "token");
 }
+
+Future<void> deleteSession() async {
+  await storage.delete(key: "token");
+}
