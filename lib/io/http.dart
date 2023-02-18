@@ -98,6 +98,16 @@ class Backend {
     return (response.data as List).map((e) => Game.fromJson(e)).toList();
   }
 
+  Future<List<Game>> getRunningGamesOnBasket(int basketId) async {
+    final response =
+        await _dio.get('/baskets/$basketId/running', queryParameters: {});
+
+    var data =
+        (response.data["running"]).map<Game>((e) => Game.fromJson(e)).toList();
+
+    return data;
+  }
+
   Future<num> forecastOccupation(int basketId, DateTime date) async {
     final response =
         await _dio.get('/baskets/$basketId/forecast', queryParameters: {

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:app_frontend/io/http.dart';
+import 'package:app_frontend/screens/game/detail.dart';
 import 'package:app_frontend/widgets/buttons.dart';
 import 'package:flutter/material.dart';
 
@@ -40,18 +41,33 @@ class _CreateGameState extends State<CreateGame> with TickerProviderStateMixin {
 
   int get team => _team;
 
+  Timer? _timer;
+
   @override
   void initState() {
     super.initState();
+    team = 1;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      if (!ready) return;
+      var games = await backend.getRunningGamesOnBasket(widget.basketId);
+      print(games);
+      if (games.isNotEmpty && mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return GamePage(games.first);
+            },
+          ),
+        );
+      }
+    });
+  }
 
-    /*Timer.periodic(const Duration(seconds: 1), (timer) async {
-      var status = await backend.getReadyStatus(widget.basketId);
-      if (status == null) return;
-      setState(() {
-        _team = status.team;
-        _ready = status.ready;
-      });
-    });*/
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
