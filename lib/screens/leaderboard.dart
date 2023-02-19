@@ -1,18 +1,17 @@
+import 'package:app_frontend/io/http.dart';
 import 'package:app_frontend/screens/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:app_frontend/models.dart';
 
 class LeaderboardPage extends StatelessWidget {
-  const LeaderboardPage({Key? key, required this.users}) : super(key: key);
-
-  final Future<List<User>> users;
+  const LeaderboardPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Leaderboard")),
       body: FutureBuilder<List<User>>(
-        future: users,
+        future: backend.getUsers(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             var users = snapshot.data!;
