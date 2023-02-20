@@ -158,10 +158,10 @@ class _GamePageState extends State<GamePage> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (_) =>
-                                          ProfilePage(game.team1[i]))),
+                                          ProfilePage(game.team2[i]))),
                               title: Text(
                                 game.team2[i].name,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.white,
                                 ),
                               ),
